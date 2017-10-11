@@ -15,3 +15,11 @@ socket.on('newMessage', (message) => {
 //     to : 'hamid@hotmail.com',
 //     text : 'hania a 5oya abdessamad'
 // });
+
+socket.on('Welcome',(message) => {
+    console.log(`Wlecome to the char application from ${message.from}`);
+});
+
+socket.on('Joined',() => {
+    console.log('New User just joined the chat');
+});

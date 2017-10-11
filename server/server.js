@@ -22,7 +22,11 @@ io.on('connection', (socket) => {
         console.log('Diconnected ' + NumberUsers);
     });
 
+    socket.emit('Welcome',{
+        from : 'admin'
+    });
 
+    socket.broadcast.emit('Joined');
 
     socket.on('createMessage', (message) => {
         console.log('message from the client ' + JSON.stringify(message));
@@ -31,10 +35,14 @@ io.on('connection', (socket) => {
             text: message.text,
             createdAt: new Date().getTime()
         });
+        // socket.broadcast.emit('newMessage',{
+        //         from: message.from,
+        //         text: message.text,
+        //         createdAt: new Date().getTime()
+        //     });
     });
 
 });
-
 
 
 app.use(express.static(publicPath));
