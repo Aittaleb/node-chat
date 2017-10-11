@@ -8,11 +8,10 @@ socket.on('disconnect', () => {
 }); 
 
 socket.on('newMessage', (message) => {
-    
     console.log('New message ' ,message );
 });
 
-socket.emit('createMessage', {
-    to : 'hamid@hotmail.com',
-    text : 'hania a 5oya abdessamad'
-});
+// socket.emit('createMessage', {
+//     to : 'hamid@hotmail.com',
+//     text : 'hania a 5oya abdessamad'
+// });
