@@ -9,10 +9,15 @@ socket.on('disconnect', function () {
 });
 
 socket.on('newMessage', function (message) {
-  console.log('newMessage', message);
-  var li = jQuery('<li></li>');
-  li.text(`${message.from}: ${message.text}`);
-  jQuery('#messages').append(li);
+  var formattedTime = moment().format("h:mm");
+  var template = jQuery('#message-template').html();
+  var html = Mustache.render(template, {
+    text: message.text,
+    from: message.from,
+    createdAt: formattedTime
+  });
+
+  jQuery('#messages').append(html);
 });
 
 
@@ -20,27 +25,34 @@ socket.on('newMessage', function (message) {
 jQuery('#message-form').on('submit', function (e) {
   e.preventDefault();
 
+  var messageTextBox = jQuery('[name=message]');
+
   socket.emit('createMessage', {
     from: 'User',
-    text: jQuery('[name=message]').val()
+    text: messageTextBox.val()
   }, function () {
-
+    messageTextBox.val('');
   });
 });
 
 jQuery('#send-location').on('click', function() {
+  var locationButton = jQuery('#send-location');
   if(!navigator.geolocation) {
     return alert('Geoloacation not supported for this browser');
   }
 
+  locationButton.attr('disabled','disabled').text('Sending ...');
    navigator.geolocation.getCurrentPosition(function (position) {
     // console.log(position);
     socket.emit('createLocationMessage',{
       latitude : position.coords.latitude,
       longitude : position.coords.longitude
     });
+    locationButton.removeAttr('disabled').text('Send Location');
   },function () {
     alert('Unable to fetch the location');
+    locationButton.removeAttr('disabled').text('Send Location');
+
   });
 
 });
@@ -54,13 +66,27 @@ socket.on('createLocationLink' , function(position) {
 });
 
 socket.on('newLocationMessage', function(message) {
+  var formattedTime = moment().format('h:mm a');
+  var template = jQuery('#location-message-template').html();
+  var html = Mustache.render(template, {
+    from: message.from,
+    url: message.url,
+    createdAt: formattedTime
+  });
 
-  var li = jQuery('<li></li>');
-  var a = jQuery('<a target="_blank">My current Location</a>');
-
-  li.text(`${message.from} : `);
-  a.attr('href',message.url);
-  li.append(a);
-  jQuery('#messages').append(li);
+  jQuery('#messages').append(html);
 
 });
+
+socket.on('sendTime',(response) => {
+  console.log('time :'+response.time)
+});
+
+
+socket.on('sendResponse',(data) => {
+  console.log('reponse :'+data.response)
+});
+
+
+
+
