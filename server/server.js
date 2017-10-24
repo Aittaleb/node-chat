@@ -42,29 +42,24 @@ io.on('connection', (socket) => {
   // socket.broadcast.emit('newMessage', generateMessage('Admin', 'New user joined'));
 
   socket.on('createMessage', (message, callback) => {
-    console.log('createMessage', message);
     var user = users.getUser(socket.id);
+    if(user && isRealString(message.text) )
+      {
+        io.to(user.room).emit('newMessage', generateMessage(user.name, message.text));
+      }
 
-    io.to(user.room).emit('newMessage', generateMessage(user.name, message.text));
     callback();
     
   });
 
   socket.on('createLocationMessage' , (position) => {
-   
+   var user = users.getUser(socket.id);
 
-  //  socket.broadcast.emit('newMessage',generateMessage('admin','latitude :'+position.latitude + ' & longitude : '+ position.longitude));
-  // socket.broadcast.emit('createLocationLink',position);
-  //console.log('position : '+ position.latitude + ','+position.longitude );
-  //console.log(JSON.stringify(generateLocationMessage('Admin',position.latitude,position.longitude)));
-  io.emit('newLocationMessage',generateLocationMessage('Admin',position.latitude,position.longitude));
-
+   if(user){
+     io.to(user.room).emit('newLocationMessage',generateLocationMessage(user.name,position.latitude,position.longitude));
+   }
   });
-  
 
-  
-
-  
 
   socket.on('disconnect', () => {
     var user = users.removeUser(socket.id);

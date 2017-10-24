@@ -71,7 +71,6 @@ jQuery('#message-form').on('submit', function (e) {
   var messageTextBox = jQuery('[name=message]');
 
   socket.emit('createMessage', {
-    from: 'User',
     text: messageTextBox.val()
   }, function () {
     messageTextBox.val('');
@@ -123,14 +122,6 @@ socket.on('newLocationMessage', function(message) {
 
 });
 
-socket.on('sendTime',(response) => {
-  console.log('time :'+response.time)
-});
-
-
-socket.on('sendResponse',(data) => {
-  console.log('reponse :'+data.response)
-});
 
 
 
